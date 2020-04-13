@@ -1,0 +1,33 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: npm 
+spec:
+  workspaces:
+  - name: deps-space
+    mountPath: /workspace/source/node_modules
+  - name: binary-space
+    mountPath: /workspace/source/package-contents/
+  inputs:
+    params:
+    - name: COMMAND
+      description: The NPM command to run
+      type: array
+      default: ["install"]
+    - name: NODE_ENV
+      description: The node environment to run this in
+      type: string
+      default: development
+    resources:
+    - name: source
+      type: git
+  steps:
+    - name: npm 
+      image: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:10
+      env:
+        - name: NODE_ENV
+          value: "$(inputs.params.NODE_ENV)"
+      workingDir: /workspace/source
+      command: ["npm"]
+      args:
+        - "$(inputs.params.COMMAND)"

@@ -1,0 +1,24 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-artifact-space-pvc
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain 
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-deps-space-pvc
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain

@@ -1,0 +1,69 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: todolist
+spec:
+  workspaces:
+  - name: local-deps-space
+  - name: local-artifact-space
+  resources:
+  - name: app-git
+    type: git
+  tasks:
+  - name: install-deps
+    taskRef:
+      name: npm
+    resources:
+      inputs:
+      - name: source
+        resource: app-git
+    params:
+    - name: COMMAND
+      value: ["install"]
+    workspaces:
+    - name: deps-space
+      workspace: local-deps-space
+    - name: binary-space
+      workspace: local-artifact-space
+  - name: run-tests
+    taskRef:
+      name: npm
+    runAfter:
+      - install-deps 
+    resources:
+      inputs:
+      - name: source
+        resource: app-git
+    params:
+    - name: COMMAND
+      value: ["run","test:all:ci"]
+    workspaces:
+    - name: deps-space
+      workspace: local-deps-space
+    - name: binary-space
+      workspace: local-artifact-space
+  - name: run-build
+    taskRef:
+      name: npm
+    runAfter:
+      - run-tests
+    resources:
+      inputs:
+      - name: source
+        resource: app-git
+    params:
+    - name: COMMAND
+      value: ["run","build:ci"]
+    workspaces:
+    - name: deps-space
+      workspace: local-deps-space
+    - name: binary-space
+      workspace: local-artifact-space
+  - name: binary-build
+    taskRef:
+      name: npm-binary-build
+    runAfter:
+      - run-build
+    workspaces:
+    - name: binary-space
+      workspace: local-artifact-space

@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: npm-binary-build
+spec:
+  workspaces:
+  - name: binary-space 
+  steps:   
+    - name: oc-binary-build 
+      image: quay.io/openshift-pipeline/openshift-cli:latest
+      command: ["/usr/local/bin/oc"]
+      workingDir: /workspace/source/
+      args:
+        - start-build
+        - -w
+        - -F
+        - todolist 
+        - --from-dir
+        - "$(workspaces.binary-space.path)"

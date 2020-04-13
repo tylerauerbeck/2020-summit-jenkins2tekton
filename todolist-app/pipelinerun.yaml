@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  generateName: todolist-run-
+spec:
+  pipelineRef:
+    name: todolist 
+  resources:
+  - name: app-git
+    resourceSpec:
+      type: git
+      params:
+        - name: url
+          value: https://github.com/tylerauerbeck/todolist
+        - name: revision
+          value: summit
+  workspaces:
+  - name: local-artifact-space
+    persistentVolumeClaim:
+      claimName: local-artifact-space-pvc
+  - name: local-deps-space
+    persistentVolumeClaim:
+      claimName: local-deps-space-pvc
