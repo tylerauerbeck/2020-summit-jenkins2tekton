@@ -1,0 +1,32 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: openshift-client
+spec:
+  workspaces:
+  - name: deps-space
+    mountPath: /workspace/source/node_modules
+  - name: binary-space
+    mountPath: /workspace/source/package-contents/
+  inputs:
+    params:
+    - name: SCRIPT
+      description: The OpenShift CLI arguments to run
+      type: string
+      default: "oc $@"
+    - name: ARGS
+      description: The OpenShift CLI arguments to run
+      type: array
+      default:
+      - "help"
+    resources:
+      - name: source
+        type: git
+        optional: true
+  steps:
+    - name: oc
+      image: quay.io/openshift/origin-cli:latest
+      script: "$(params.SCRIPT)"
+      args:
+        - "$(params.ARGS)"
