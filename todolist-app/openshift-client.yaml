@@ -20,10 +20,6 @@ spec:
       type: array
       default:
       - "help"
-    resources:
-      - name: source
-        type: git
-        optional: true
   steps:
     - name: oc
       image: quay.io/openshift/origin-cli:latest

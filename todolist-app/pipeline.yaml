@@ -61,32 +61,15 @@ spec:
       workspace: local-artifact-space
   - name: binary-build
     taskRef:
-      name: openshift-client
+      name: npm-binary-build
     runAfter:
-      - run-tests
-    resources:
-      inputs:
-      - name: source
-        resource: app-git
-    params:
-    - name: SCRIPT
-      value: "start-build"
-    - name: ARGS
-      value: ["-w","-F","todolist","--from-dir","$(workspace.binary-space.path)"]
+      - run-build
     workspaces:
     - name: binary-space
       workspace: local-artifact-space
-  - name: deploy
+  - name: deploy-todolist
     taskRef:
-      name: openshift-client
+      name: deploy
     runAfter:
       - binary-build
-    resources:
-      inputs:
-      - name: source
-        resource: app-git
-    params:
-    - name: SCRIPT
-      value: rollout
-    - name: ARGS
-      value: ["rollout","latest","dc","todolist"] 
+    
